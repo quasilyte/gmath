@@ -192,3 +192,14 @@ func (v Vec) Neg() Vec {
 		Y: -v.Y,
 	}
 }
+
+// CubicInterpolate interpolates between a (this vector) and b using
+// preA and postB as handles.
+// The t arguments specifies the interpolation progression (a value from 0 to 1).
+// With t=0 it returns a, with t=1 it returns b.
+func (v Vec) CubicInterpolate(preA, b, postB Vec, t float64) Vec {
+	res := v
+	res.X = cubicInterpolate(res.X, b.X, preA.X, postB.X, t)
+	res.Y = cubicInterpolate(res.Y, b.Y, preA.Y, postB.Y, t)
+	return res
+}
