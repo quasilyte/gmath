@@ -203,3 +203,12 @@ func (v Vec) CubicInterpolate(preA, b, postB Vec, t float64) Vec {
 	res.Y = cubicInterpolate(res.Y, b.Y, preA.Y, postB.Y, t)
 	return res
 }
+
+// LinearInterpolate interpolates between two points by a normalized value.
+// This function is commonly named "lerp".
+func (v Vec) LinearInterpolate(to Vec, t float64) Vec {
+	return Vec{
+		X: Lerp(v.X, to.X, t),
+		Y: Lerp(v.Y, to.Y, t),
+	}
+}

@@ -10,6 +10,10 @@ func EqualApprox[T float32 | float64](a, b T) bool {
 	return math.Abs(float64(a-b)) <= Epsilon
 }
 
+func Lerp(from, to, t float64) float64 {
+	return from + ((to - from) * t)
+}
+
 func ArcContains(angle, measure Rad, pos, point Vec) bool {
 	startAngle := (angle - measure/2)
 	endAngle := (angle + measure/2)
