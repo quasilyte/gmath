@@ -30,6 +30,14 @@ func (r *Rand) IntRange(min, max int) int {
 	return min + r.rng.Intn(max-min+1)
 }
 
+func (r *Rand) PositiveInt64() int64 {
+	return r.rng.Int63()
+}
+
+func (r *Rand) PositiveInt() int {
+	return r.rng.Int()
+}
+
 func (r *Rand) Uint64() uint64 {
 	return r.rng.Uint64()
 }
