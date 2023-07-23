@@ -25,10 +25,10 @@ func (r Rect) IsEmpty() bool {
 func (r Rect) Contains(p Vec) bool {
 	return r.Min.X <= p.X && p.X < r.Max.X &&
 		r.Min.Y <= p.Y && p.Y < r.Max.Y
-
 }
 
-func (r Rect) Overlaps(other Rect) bool {
+// Intersects reports whether r and other have a common intersection.
+func (r Rect) Intersects(other Rect) bool {
 	return !r.IsEmpty() && !other.IsEmpty() &&
 		r.Min.X < other.Max.X && other.Min.X < r.Max.X &&
 		r.Min.Y < other.Max.Y && other.Min.Y < r.Max.Y
