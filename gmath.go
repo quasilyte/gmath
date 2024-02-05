@@ -66,5 +66,5 @@ func Percentage[T numeric](value, max T) T {
 }
 
 type numeric interface {
-	int | float64
+	int | float64 | float32
 }
