@@ -6,7 +6,7 @@ import (
 
 const Epsilon = 1e-9
 
-func EqualApprox[T float32 | float64](a, b T) bool {
+func EqualApprox[T float](a, b T) bool {
 	return math.Abs(float64(a-b)) <= Epsilon
 }
 
@@ -66,5 +66,11 @@ func Percentage[T numeric](value, max T) T {
 }
 
 type numeric interface {
-	int | float64 | float32
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+		float
+}
+
+type float interface {
+	float32 | float64
 }
