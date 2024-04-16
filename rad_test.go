@@ -60,18 +60,27 @@ func TestRadAngleDelta(t *testing.T) {
 		{-0.5, -0.2, 0.3},
 		{0.4, 0, -0.4},
 		{math.Pi, 0, -math.Pi},
-		{-math.Pi, 0, math.Pi},
+		{-math.Pi, 0, -math.Pi},
 		{2 * math.Pi, 0, 0},
 		{4 * math.Pi, 0, 0},
 		{6 * math.Pi, 0, 0},
 		{3 * math.Pi, 0, -math.Pi},
-		{0, 3 * math.Pi, math.Pi},
+		{0, 3 * math.Pi, -math.Pi},
+		{0, 2.9 * math.Pi, Rad(2.9 * math.Pi).Normalized()},
+		{2*math.Pi - 0.1, 0.1, 0.2},
+		{0.1, 2*math.Pi - 0.1, -0.2},
+		{4*math.Pi - 0.1, 0.1, 0.2},
+		{0.1, 4*math.Pi - 0.1, -0.2},
+		{8*math.Pi - 0.1, 2*math.Pi + 0.1, 0.2},
+		{2*math.Pi + 0.1, 8*math.Pi - 0.1, -0.2},
+		{math.Pi / 2, -0.2, -(math.Pi/2 + 0.2)},
+		{-0.2, math.Pi / 2, math.Pi/2 + 0.2},
 	}
 
 	for _, test := range tests {
 		have := test.a.AngleDelta(test.b)
 		if !have.EqualApprox(test.want) {
-			t.Fatalf("AngleDelta(%f, %f):\nhave: %f\nwant: %f",
+			t.Fatalf("AngleDelta(from=%f, to=%f):\nhave: %f\nwant: %f",
 				test.a, test.b, have, test.want)
 		}
 	}

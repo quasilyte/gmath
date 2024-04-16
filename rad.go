@@ -40,22 +40,14 @@ func (r Rad) EqualApprox(other Rad) bool {
 // AngleDelta returns an angle delta between two radian values.
 // The sign is preserved.
 //
+// When using this function to calculate a rotation direction (CW vs CCW),
+// r is a current rotation and r2 is a target rotation.
+//
 // It doesn't need the angles to be normalized,
 // r=0 and r=2*Pi are considered to have no delta.
+// The return value is always normalized.
 func (r Rad) AngleDelta(r2 Rad) Rad {
-	angle1 := math.Mod(float64(r-r2), 2*math.Pi)
-	angle2 := math.Mod(float64(r2-r), 2*math.Pi)
-	if angle1 < angle2 {
-		return Rad(-angle1)
-	}
-	return Rad(angle2)
-}
-
-func (r Rad) AngleDelta2(r2 Rad) Rad {
-	v1 := RadToVec(r)
-	v2 := RadToVec(r2)
-	scalar := v1.Dot(v2)
-	return Rad(math.Acos(scalar))
+	return Rad(fposmod(float64(r2-r+math.Pi), 2*math.Pi) - math.Pi)
 }
 
 func (r Rad) LerpAngle(toAngle Rad, weight float64) Rad {
@@ -65,7 +57,7 @@ func (r Rad) LerpAngle(toAngle Rad, weight float64) Rad {
 	// TODO: can this be optimized?
 	// AngleDelta should be replaced by something more efficient.
 	// Or maybe we can avoid abs on the both sides?
-	if r.AngleDelta2(toAngle).Abs() < rotationAmount.Abs() {
+	if r.AngleDelta(toAngle).Abs() < rotationAmount.Abs() {
 		return toAngle
 	}
 	return r + rotationAmount
