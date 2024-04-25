@@ -2,6 +2,7 @@ package gmath
 
 import (
 	"fmt"
+	"image"
 	"math"
 )
 
@@ -24,6 +25,24 @@ type Vec struct {
 // RadToVec converts a given angle into a normalized vector that encodes that direction.
 func RadToVec(angle Rad) Vec {
 	return Vec{X: angle.Cos(), Y: angle.Sin()}
+}
+
+// VecFromStd converts an [image.Point] into a [Vec].
+// There is [Vec.ToStd] method to reverse it.
+func VecFromStd(src image.Point) Vec {
+	return Vec{
+		X: float64(src.X),
+		Y: float64(src.Y),
+	}
+}
+
+// ToStd converts [Vec] into [image.Point].
+// There is [VecFromStd] function to reverse it.
+func (v Vec) ToStd() image.Point {
+	return image.Point{
+		X: int(v.X),
+		Y: int(v.Y),
+	}
 }
 
 // String returns a pretty-printed representation of a 2D vector object.

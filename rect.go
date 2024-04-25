@@ -1,8 +1,28 @@
 package gmath
 
+import "image"
+
 type Rect struct {
 	Min Vec
 	Max Vec
+}
+
+// RectFromStd converts an [image.Rectangle] into a [Rect].
+// There is [Rect.ToStd] method to reverse it.
+func RectFromStd(src image.Rectangle) Rect {
+	return Rect{
+		Min: VecFromStd(src.Min),
+		Max: VecFromStd(src.Max),
+	}
+}
+
+// ToStd converts an [Rect] into a [image.Rectangle].
+// There is [RectFromStd] function to reverse it.
+func (r Rect) ToStd() image.Rectangle {
+	return image.Rectangle{
+		Min: r.Min.ToStd(),
+		Max: r.Max.ToStd(),
+	}
 }
 
 func (r Rect) Width() float64 { return r.Max.X - r.Min.X }
