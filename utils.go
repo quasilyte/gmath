@@ -5,13 +5,6 @@ import (
 	"strconv"
 )
 
-func skipSpaces(data []byte) []byte {
-	for len(data) > 0 && data[0] == ' ' {
-		data = data[1:]
-	}
-	return data
-}
-
 func parseFloat(s []byte) (float64, error) {
 	s = bytes.TrimSpace(s)
 
