@@ -1,9 +1,12 @@
 package gmath
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"image"
 	"math"
+	"strconv"
 )
 
 // Vec is a 2-element structure that is used to represent positions,
@@ -230,4 +233,54 @@ func (v Vec) LinearInterpolate(to Vec, t float64) Vec {
 		X: Lerp(v.X, to.X, t),
 		Y: Lerp(v.Y, to.Y, t),
 	}
+}
+
+func (v Vec) MarshalJSON() ([]byte, error) {
+	if v.IsZero() {
+		// Zero vectors are quite common.
+		// Encode them with a shorter notation.
+		return []byte("[]"), nil
+	}
+	buf := make([]byte, 0, 16)
+	buf = append(buf, '[')
+	buf = strconv.AppendFloat(buf, v.X, 'f', -1, 64)
+	buf = append(buf, ',')
+	buf = strconv.AppendFloat(buf, v.Y, 'f', -1, 64)
+	buf = append(buf, ']')
+	return buf, nil
+}
+
+func (v *Vec) UnmarshalJSON(data []byte) error {
+	if string(data) == "[]" {
+		// Recognize a MarshalJSON-produced empty vector notation.
+		*v = Vec{}
+		return nil
+	}
+
+	if data[0] != '[' {
+		return errors.New("missing opening '['")
+	}
+	if data[len(data)-1] != ']' {
+		return errors.New("missing closing ']'")
+	}
+
+	data = data[1:]           // '['
+	data = data[:len(data)-1] // ']'
+
+	commaIndex := bytes.IndexByte(data, ',')
+	if commaIndex == -1 {
+		return errors.New("missing ',' between X and Y values")
+	}
+	x, err := parseFloat(data[:commaIndex])
+	if err != nil {
+		return err
+	}
+	y, err := parseFloat(data[commaIndex+1:])
+	if err != nil {
+		return err
+	}
+
+	v.X = x
+	v.Y = y
+	return err
 }

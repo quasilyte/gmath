@@ -1,9 +1,123 @@
 package gmath
 
 import (
+	"encoding/json"
+	"fmt"
 	"math"
 	"testing"
 )
+
+func BenchmarkVecJSONEncode(b *testing.B) {
+	v := &Vec{X: 54.7, Y: 3.0}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		json.Marshal(v)
+	}
+}
+
+func BenchmarkVecJSONDecode(b *testing.B) {
+	v := &Vec{X: 54.7, Y: 3.0}
+	data, err := json.Marshal(v)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dst := &Vec{}
+		if err := json.Unmarshal(data, dst); err != nil {
+			b.Fatal(err)
+		}
+		if *dst != *v {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkVecJSONEncodeZero(b *testing.B) {
+	v := &Vec{}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		json.Marshal(v)
+	}
+}
+
+func BenchmarkVecJSONDecodeZero(b *testing.B) {
+	v := &Vec{}
+	data, err := json.Marshal(v)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dst := &Vec{}
+		if err := json.Unmarshal(data, dst); err != nil {
+			b.Fatal(err)
+		}
+		if *dst != *v {
+			b.Fatal(err)
+		}
+	}
+}
+
+func TestVecJSON(t *testing.T) {
+	vectors := []Vec{
+		{0, 0},
+		{0.1, 0.1},
+		{1.5354, 395.6452934},
+		{0.0000342, 0.0103},
+		{0.999999, 1.11111},
+		{0.0000000002399999, 0.0000000000002199999},
+		{0.00000000000001399999, 0.00000000000000002199999},
+		{93243285823.9359234932, 12982.0},
+		{1, 1},
+		{60000000, 5300340},
+		{-0, 1},
+	}
+	formats := []string{
+		"[%#v,%#v]",
+		"[%#v   ,%#v]",
+		"[%#v,  %#v]",
+		"[ %#v, %#v]",
+		"[%#v , %#v]",
+		"[    %#v  ,  %#v   ]",
+	}
+	signs := []Vec{
+		{1, 1},
+		{1, -1},
+		{-1, 1},
+		{-1, -1},
+	}
+	for _, testVec := range vectors {
+		for _, signVec := range signs {
+			v := testVec.Mul(signVec)
+			for _, f := range formats {
+				s := fmt.Sprintf(f, v.X, v.Y)
+				var v1 Vec
+				if err := json.Unmarshal([]byte(s), &v1); err != nil {
+					t.Fatalf("unmarshal %q (signs=%v): %v", s, signVec, err)
+				}
+				if v1 != v {
+					t.Fatalf("unmarshal %q (signs=%v):\n%#v != %#v", s, signVec, v1, v)
+				}
+				s2, err := json.Marshal(v1)
+				if err != nil {
+					t.Fatalf("marshal %#v after unmarshalling %q (signs=%v): %v", v1, s, signs, err)
+				}
+				var v2 Vec
+				if err := json.Unmarshal(s2, &v2); err != nil {
+					t.Fatalf("unmarhal-marshal-unmarshal failed, s=%q, s2=%q (signs=%v)", s, string(s2), signs)
+				}
+				if v2 != v {
+					t.Fatalf("unmarhal-marshal-unmarshal comparison failed, s=%q, s2=%q (signs=%v)", s, string(s2), signs)
+				}
+			}
+		}
+	}
+}
 
 func TestVecAPI(t *testing.T) {
 	assertTrue := func(v bool) {
