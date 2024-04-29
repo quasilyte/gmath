@@ -235,6 +235,14 @@ func (v Vec) LinearInterpolate(to Vec, t float64) Vec {
 	}
 }
 
+// Midpoint returns the middle point vector of two point vectors.
+//
+// If we imagine [v] and [to] form a line, the midpoint would
+// be a central point of this line.
+func (v Vec) Midpoint(to Vec) Vec {
+	return v.Add(to).Mulf(0.5)
+}
+
 func (v Vec) MarshalJSON() ([]byte, error) {
 	if v.IsZero() {
 		// Zero vectors are quite common.
