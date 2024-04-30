@@ -73,3 +73,10 @@ func (r Rect) Intersects(other Rect) bool {
 		r.Min.X < other.Max.X && other.Min.X < r.Max.X &&
 		r.Min.Y < other.Max.Y && other.Min.Y < r.Max.Y
 }
+
+func (r Rect) Add(p Vec) Rect {
+	return Rect{
+		Min: r.Min.Add(p),
+		Max: r.Max.Add(p),
+	}
+}
