@@ -1,6 +1,8 @@
 package gmath
 
-import "image"
+import (
+	"image"
+)
 
 type Rect struct {
 	Min Vec
@@ -55,6 +57,14 @@ func (r Rect) IsEmpty() bool {
 func (r Rect) Contains(p Vec) bool {
 	return r.Min.X <= p.X && p.X < r.Max.X &&
 		r.Min.Y <= p.Y && p.Y < r.Max.Y
+}
+
+func (r Rect) ContainsRect(other Rect) bool {
+	if other.IsEmpty() {
+		return true
+	}
+	return r.Min.X <= other.Min.X && other.Max.X <= r.Max.X &&
+		r.Min.Y <= other.Min.Y && other.Max.Y <= r.Max.Y
 }
 
 // Intersects reports whether r and other have a common intersection.
