@@ -186,6 +186,13 @@ func (v Vec) Sub(other Vec) Vec {
 	}
 }
 
+func (v Vec) Rounded() Vec {
+	return Vec{
+		X: math.Round(v.X),
+		Y: math.Round(v.Y),
+	}
+}
+
 // Normalized returns the vector scaled to unit length.
 // Functionally equivalent to `v.Divf(v.Len())`.
 //
