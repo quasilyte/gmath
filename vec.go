@@ -250,6 +250,21 @@ func (v Vec) Midpoint(to Vec) Vec {
 	return v.Add(to).Mulf(0.5)
 }
 
+// BoundsRect creates a rectangle with a center or v, width of w and height of h.
+// This is useful when a vector interpreted as a point needs to be extended to an area.
+//
+// Note that the result is not rounded.
+func (v Vec) BoundsRect(w, h float64) Rect {
+	offset := Vec{
+		X: w * 0.5,
+		Y: h * 0.5,
+	}
+	return Rect{
+		Min: v.Sub(offset),
+		Max: v.Add(offset),
+	}
+}
+
 func (v Vec) MarshalJSON() ([]byte, error) {
 	if v.IsZero() {
 		// Zero vectors are quite common.
