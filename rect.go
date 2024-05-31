@@ -27,6 +27,10 @@ func (r Rect) ToStd() image.Rectangle {
 	}
 }
 
+func (r Rect) IsZero() bool {
+	return r == Rect{}
+}
+
 func (r Rect) Width() float64 { return r.Max.X - r.Min.X }
 
 func (r Rect) Height() float64 { return r.Max.Y - r.Min.Y }
