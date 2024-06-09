@@ -35,6 +35,15 @@ func (r Rect) Width() float64 { return r.Max.X - r.Min.X }
 
 func (r Rect) Height() float64 { return r.Max.Y - r.Min.Y }
 
+// Size returns r dimensions in the form of a [Vec].
+// In other words, it's identical to Vec{X: r.Width(), Y: r.Height()}.
+func (r Rect) Size() Vec {
+	return Vec{
+		X: r.Width(),
+		Y: r.Height(),
+	}
+}
+
 // Center returns the center point of this rectangle.
 //
 // This center point may need some rounding,
