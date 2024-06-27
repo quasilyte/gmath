@@ -42,6 +42,10 @@ func (r *Rand) Uint64() uint64 {
 	return r.rng.Uint64()
 }
 
+func (r *Rand) Uint32() uint32 {
+	return r.rng.Uint32()
+}
+
 func (r *Rand) Float() float64 {
 	return r.rng.Float64()
 }
