@@ -72,5 +72,5 @@ type numeric interface {
 }
 
 type float interface {
-	float32 | float64
+	~float32 | ~float64
 }
