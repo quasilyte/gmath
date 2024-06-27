@@ -20,9 +20,28 @@ import (
 // Since Go has no operator overloading, we implement scalar forms of
 // operations with "f" suffix. So, Add() is used to add two vectors
 // while Addf() is used to add scalar to the vector.
-type Vec struct {
-	X float64
-	Y float64
+//
+// If you need float32 components, use [Vec32] type,
+// but keep in mind that [Vec] should be preferred most of the time.
+type Vec = vec[float64]
+
+// Vec32 is like [Vec], but with float32-typed fields.
+// You should generally prefer [Vec], but for some specific low-level
+// stuff you might want to use a float32 variant.
+//
+// Most functions of this package operate on [Vec], so you will
+// lose some of the convenience while using [Vec32].
+//
+// If anything, [Vec32] will be slower on most operations due to the
+// intermediate float32->float64 conversions that will happen here and there.
+// It should be only used as a space optimization, when you need
+// to store lots of vectors and memory locality dominates a small processing overhead.
+// If in doubts, use [Vec].
+type Vec32 = vec[float32]
+
+type vec[T float] struct {
+	X T
+	Y T
 }
 
 // RadToVec converts a given angle into a normalized vector that encodes that direction.
@@ -41,7 +60,7 @@ func VecFromStd(src image.Point) Vec {
 
 // ToStd converts [Vec] into [image.Point].
 // There is [VecFromStd] function to reverse it.
-func (v Vec) ToStd() image.Point {
+func (v vec[T]) ToStd() image.Point {
 	return image.Point{
 		X: int(v.X),
 		Y: int(v.Y),
@@ -49,7 +68,7 @@ func (v Vec) ToStd() image.Point {
 }
 
 // String returns a pretty-printed representation of a 2D vector object.
-func (v Vec) String() string {
+func (v vec[T]) String() string {
 	return fmt.Sprintf("[%f, %f]", v.X, v.Y)
 }
 
@@ -58,33 +77,33 @@ func (v Vec) String() string {
 //
 // The zero value vector has a property that its length is 0,
 // but not all zero length vectors are zero value vectors.
-func (v Vec) IsZero() bool {
+func (v vec[T]) IsZero() bool {
 	return v.X == 0 && v.Y == 0
 }
 
 // IsNormalizer reports whether the vector is normalized.
 // A vector is considered to be normalized if its length is 1.
-func (v Vec) IsNormalized() bool {
+func (v vec[T]) IsNormalized() bool {
 	return EqualApprox(v.LenSquared(), 1)
 }
 
 // DistanceTo calculates the distance between the two vectors.
-func (v Vec) DistanceTo(v2 Vec) float64 {
-	return math.Sqrt((v.X-v2.X)*(v.X-v2.X) + (v.Y-v2.Y)*(v.Y-v2.Y))
+func (v vec[T]) DistanceTo(v2 vec[T]) T {
+	return T(math.Sqrt(float64((v.X-v2.X)*(v.X-v2.X) + (v.Y-v2.Y)*(v.Y-v2.Y))))
 }
 
-func (v Vec) DistanceSquaredTo(v2 Vec) float64 {
+func (v vec[T]) DistanceSquaredTo(v2 vec[T]) T {
 	return ((v.X - v2.X) * (v.X - v2.X)) + ((v.Y - v2.Y) * (v.Y - v2.Y))
 }
 
 // Dot returns a dot-product of the two vectors.
-func (v Vec) Dot(v2 Vec) float64 {
+func (v vec[T]) Dot(v2 vec[T]) T {
 	return (v.X * v2.X) + (v.Y * v2.Y)
 }
 
 // Len reports the length of this vector (also known as magnitude).
-func (v Vec) Len() float64 {
-	return math.Sqrt(v.LenSquared())
+func (v vec[T]) Len() T {
+	return T(math.Sqrt(float64(v.LenSquared())))
 }
 
 // LenSquared returns the squared length of this vector.
@@ -92,39 +111,39 @@ func (v Vec) Len() float64 {
 // This function runs faster than Len(),
 // so prefer it if you need to compare vectors
 // or need the squared distance for some formula.
-func (v Vec) LenSquared() float64 {
+func (v vec[T]) LenSquared() T {
 	return v.Dot(v)
 }
 
-func (v Vec) Rotated(angle Rad) Vec {
-	sine := angle.Sin()
-	cosi := angle.Cos()
-	return Vec{
+func (v vec[T]) Rotated(angle Rad) vec[T] {
+	sine := T(angle.Sin())
+	cosi := T(angle.Cos())
+	return vec[T]{
 		X: v.X*cosi - v.Y*sine,
 		Y: v.X*sine + v.Y*cosi,
 	}
 }
 
-func (v Vec) Angle() Rad {
-	return Rad(math.Atan2(v.Y, v.X))
+func (v vec[T]) Angle() Rad {
+	return Rad(math.Atan2(float64(v.Y), float64(v.X)))
 }
 
 // AngleToPoint returns the angle from v towards the given point.
-func (v Vec) AngleToPoint(pos Vec) Rad {
+func (v vec[T]) AngleToPoint(pos vec[T]) Rad {
 	return pos.Sub(v).Angle()
 }
 
-func (v Vec) DirectionTo(v2 Vec) Vec {
+func (v vec[T]) DirectionTo(v2 vec[T]) vec[T] {
 	return v.Sub(v2).Normalized()
 }
 
-func (v Vec) VecTowards(pos Vec, length float64) Vec {
+func (v vec[T]) VecTowards(pos vec[T], length T) vec[T] {
 	angle := v.AngleToPoint(pos)
-	result := Vec{X: angle.Cos(), Y: angle.Sin()}
+	result := vec[T]{X: T(angle.Cos()), Y: T(angle.Sin())}
 	return result.Mulf(length)
 }
 
-func (v Vec) MoveTowards(pos Vec, length float64) Vec {
+func (v vec[T]) MoveTowards(pos vec[T], length T) vec[T] {
 	direction := pos.Sub(v) // Not normalized
 	dist := direction.Len()
 	if dist <= length || dist < Epsilon {
@@ -133,63 +152,63 @@ func (v Vec) MoveTowards(pos Vec, length float64) Vec {
 	return v.Add(direction.Divf(dist).Mulf(length))
 }
 
-func (v Vec) EqualApprox(other Vec) bool {
+func (v vec[T]) EqualApprox(other vec[T]) bool {
 	return EqualApprox(v.X, other.X) && EqualApprox(v.Y, other.Y)
 }
 
-func (v Vec) MoveInDirection(dist float64, dir Rad) Vec {
-	return Vec{
-		X: v.X + dist*dir.Cos(),
-		Y: v.Y + dist*dir.Sin(),
+func (v vec[T]) MoveInDirection(dist T, dir Rad) vec[T] {
+	return vec[T]{
+		X: v.X + T(float64(dist)*dir.Cos()),
+		Y: v.Y + T(float64(dist)*dir.Sin()),
 	}
 }
 
-func (v Vec) Mulf(scalar float64) Vec {
-	return Vec{
+func (v vec[T]) Mulf(scalar T) vec[T] {
+	return vec[T]{
 		X: v.X * scalar,
 		Y: v.Y * scalar,
 	}
 }
 
-func (v Vec) Mul(other Vec) Vec {
-	return Vec{
+func (v vec[T]) Mul(other vec[T]) vec[T] {
+	return vec[T]{
 		X: v.X * other.X,
 		Y: v.Y * other.Y,
 	}
 }
 
-func (v Vec) Divf(scalar float64) Vec {
-	return Vec{
+func (v vec[T]) Divf(scalar T) vec[T] {
+	return vec[T]{
 		X: v.X / scalar,
 		Y: v.Y / scalar,
 	}
 }
 
-func (v Vec) Div(other Vec) Vec {
-	return Vec{
+func (v vec[T]) Div(other vec[T]) vec[T] {
+	return vec[T]{
 		X: v.X / other.X,
 		Y: v.Y / other.Y,
 	}
 }
 
-func (v Vec) Add(other Vec) Vec {
-	return Vec{
+func (v vec[T]) Add(other vec[T]) vec[T] {
+	return vec[T]{
 		X: v.X + other.X,
 		Y: v.Y + other.Y,
 	}
 }
 
-func (v Vec) Sub(other Vec) Vec {
-	return Vec{
+func (v vec[T]) Sub(other vec[T]) vec[T] {
+	return vec[T]{
 		X: v.X - other.X,
 		Y: v.Y - other.Y,
 	}
 }
 
-func (v Vec) Rounded() Vec {
-	return Vec{
-		X: math.Round(v.X),
-		Y: math.Round(v.Y),
+func (v vec[T]) Rounded() vec[T] {
+	return vec[T]{
+		X: T(math.Round(float64(v.X))),
+		Y: T(math.Round(float64(v.Y))),
 	}
 }
 
@@ -197,15 +216,15 @@ func (v Vec) Rounded() Vec {
 // Functionally equivalent to `v.Divf(v.Len())`.
 //
 // Special case: for zero value vectors it returns that unchanged.
-func (v Vec) Normalized() Vec {
+func (v vec[T]) Normalized() vec[T] {
 	l := v.LenSquared()
 	if l != 0 {
-		return v.Mulf(1 / math.Sqrt(l))
+		return v.Mulf(T(1 / math.Sqrt(float64(l))))
 	}
 	return v
 }
 
-func (v Vec) ClampLen(limit float64) Vec {
+func (v vec[T]) ClampLen(limit T) vec[T] {
 	l := v.Len()
 	if l > 0 && l > limit {
 		v = v.Divf(l)
@@ -215,8 +234,8 @@ func (v Vec) ClampLen(limit float64) Vec {
 }
 
 // Neg applies unary minus (-) to the vector.
-func (v Vec) Neg() Vec {
-	return Vec{
+func (v vec[T]) Neg() vec[T] {
+	return vec[T]{
 		X: -v.X,
 		Y: -v.Y,
 	}
@@ -226,19 +245,19 @@ func (v Vec) Neg() Vec {
 // preA and postB as handles.
 // The t arguments specifies the interpolation progression (a value from 0 to 1).
 // With t=0 it returns a, with t=1 it returns b.
-func (v Vec) CubicInterpolate(preA, b, postB Vec, t float64) Vec {
+func (v vec[T]) CubicInterpolate(preA, b, postB Vec, t T) vec[T] {
 	res := v
-	res.X = cubicInterpolate(res.X, b.X, preA.X, postB.X, t)
-	res.Y = cubicInterpolate(res.Y, b.Y, preA.Y, postB.Y, t)
+	res.X = T(cubicInterpolate(float64(res.X), float64(b.X), preA.X, postB.X, float64(t)))
+	res.Y = T(cubicInterpolate(float64(res.Y), float64(b.Y), preA.Y, postB.Y, float64(t)))
 	return res
 }
 
 // LinearInterpolate interpolates between two points by a normalized value.
 // This function is commonly named "lerp".
-func (v Vec) LinearInterpolate(to Vec, t float64) Vec {
-	return Vec{
-		X: Lerp(v.X, to.X, t),
-		Y: Lerp(v.Y, to.Y, t),
+func (v vec[T]) LinearInterpolate(to vec[T], t T) vec[T] {
+	return vec[T]{
+		X: T(Lerp(float64(v.X), float64(to.X), float64(t))),
+		Y: T(Lerp(float64(v.Y), float64(to.Y), float64(t))),
 	}
 }
 
@@ -246,7 +265,7 @@ func (v Vec) LinearInterpolate(to Vec, t float64) Vec {
 //
 // If we imagine [v] and [to] form a line, the midpoint would
 // be a central point of this line.
-func (v Vec) Midpoint(to Vec) Vec {
+func (v vec[T]) Midpoint(to vec[T]) vec[T] {
 	return v.Add(to).Mulf(0.5)
 }
 
@@ -254,18 +273,18 @@ func (v Vec) Midpoint(to Vec) Vec {
 // This is useful when a vector interpreted as a point needs to be extended to an area.
 //
 // Note that the result is not rounded.
-func (v Vec) BoundsRect(w, h float64) Rect {
-	offset := Vec{
+func (v vec[T]) BoundsRect(w, h T) Rect {
+	offset := vec[T]{
 		X: w * 0.5,
 		Y: h * 0.5,
 	}
 	return Rect{
-		Min: v.Sub(offset),
-		Max: v.Add(offset),
+		Min: v.Sub(offset).asVec64(),
+		Max: v.Add(offset).asVec64(),
 	}
 }
 
-func (v Vec) MarshalJSON() ([]byte, error) {
+func (v vec[T]) MarshalJSON() ([]byte, error) {
 	if v.IsZero() {
 		// Zero vectors are quite common.
 		// Encode them with a shorter notation.
@@ -273,17 +292,17 @@ func (v Vec) MarshalJSON() ([]byte, error) {
 	}
 	buf := make([]byte, 0, 16)
 	buf = append(buf, '[')
-	buf = strconv.AppendFloat(buf, v.X, 'f', -1, 64)
+	buf = strconv.AppendFloat(buf, float64(v.X), 'f', -1, 64)
 	buf = append(buf, ',')
-	buf = strconv.AppendFloat(buf, v.Y, 'f', -1, 64)
+	buf = strconv.AppendFloat(buf, float64(v.Y), 'f', -1, 64)
 	buf = append(buf, ']')
 	return buf, nil
 }
 
-func (v *Vec) UnmarshalJSON(data []byte) error {
+func (v *vec[T]) UnmarshalJSON(data []byte) error {
 	if string(data) == "[]" {
 		// Recognize a MarshalJSON-produced empty vector notation.
-		*v = Vec{}
+		*v = vec[T]{}
 		return nil
 	}
 
@@ -310,7 +329,16 @@ func (v *Vec) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	v.X = x
-	v.Y = y
+	v.X = T(x)
+	v.Y = T(y)
 	return err
+}
+
+func (v vec[T]) asVec64() Vec {
+	// For vec[float64] this should be no-op.
+	// For vec[float32] it should do a float32->float64 conversion.
+	return Vec{
+		X: float64(v.X),
+		Y: float64(v.Y),
+	}
 }
