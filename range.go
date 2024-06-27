@@ -17,6 +17,11 @@ func (rng Range[T]) IsValid() bool {
 	return rng.Max >= rng.Min
 }
 
+func (rng Range[T]) InBounds(minValue, maxValue T) bool {
+	return rng.Min >= minValue && rng.Max <= maxValue &&
+		rng.IsValid()
+}
+
 func (rng Range[T]) Len() int {
 	return int(rng.Max - rng.Min)
 }
