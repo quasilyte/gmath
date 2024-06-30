@@ -10,7 +10,7 @@ func EqualApprox[T float](a, b T) bool {
 	return math.Abs(float64(a-b)) <= Epsilon
 }
 
-func Lerp(from, to, t float64) float64 {
+func Lerp[T float](from, to, t T) T {
 	return from + ((to - from) * t)
 }
 
