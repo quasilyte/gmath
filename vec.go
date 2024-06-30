@@ -116,11 +116,13 @@ func (v vec[T]) LenSquared() T {
 }
 
 func (v vec[T]) Rotated(angle Rad) vec[T] {
-	sine := T(angle.Sin())
-	cosi := T(angle.Cos())
+	sine, cosi := math.Sincos(float64(angle))
+	// For 64-bit it should be a no-op recognizable by the compiler.
+	tsin := T(sine)
+	tcos := T(cosi)
 	return vec[T]{
-		X: v.X*cosi - v.Y*sine,
-		Y: v.X*sine + v.Y*cosi,
+		X: v.X*tcos - v.Y*tsin,
+		Y: v.X*tsin + v.Y*tcos,
 	}
 }
 
