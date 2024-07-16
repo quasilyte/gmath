@@ -15,6 +15,10 @@ func DegToRad(deg float64) Rad {
 	return Rad(deg * (math.Pi / 180))
 }
 
+func RadToDeg(r Rad) float64 {
+	return float64(r * (180 / math.Pi))
+}
+
 // Positive returns the equivalent radian value expressed as a positive value.
 func (r Rad) Positive() Rad {
 	if r >= 0 {
