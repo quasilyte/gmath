@@ -363,6 +363,6 @@ func (v vec[T]) asVec64() Vec {
 // therefore we can use a convenient Vec API while
 // still being compatible with Ebitengine needs without
 // any redundant allocations.
-func (v vec[T]) AsSlice() []T {
+func (v *vec[T]) AsSlice() []T {
 	return unsafe.Slice(&v.X, 2)
 }
