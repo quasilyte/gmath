@@ -7,6 +7,7 @@ import (
 	"image"
 	"math"
 	"strconv"
+	"unsafe"
 )
 
 // Vec is a 2-element structure that is used to represent positions,
@@ -343,4 +344,25 @@ func (v vec[T]) asVec64() Vec {
 		X: float64(v.X),
 		Y: float64(v.Y),
 	}
+}
+
+// AsSlice returns vector as a slice view.
+//
+// This view can be used to read and write to Vec,
+// but it should not be used as append operand.
+//
+// This operation doesn't allocate.
+//
+// For 64-bit vectors, it returns []float64,
+// For 32-bit vectors, it returns []float32.
+//
+// The most common use case for this function is
+// uniform variables binding in Ebitengine, as
+// it wants vec's as []float32 slices.
+// Allocating real slices for it is a waste,
+// therefore we can use a convenient Vec API while
+// still being compatible with Ebitengine needs without
+// any redundant allocations.
+func (v vec[T]) AsSlice() []T {
+	return unsafe.Slice(&v.X, 2)
 }
