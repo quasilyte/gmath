@@ -282,8 +282,8 @@ func (v vec[T]) BoundsRect(w, h T) Rect {
 		Y: h * 0.5,
 	}
 	return Rect{
-		Min: v.Sub(offset).asVec64(),
-		Max: v.Add(offset).asVec64(),
+		Min: v.Sub(offset).AsVec64(),
+		Max: v.Add(offset).AsVec64(),
 	}
 }
 
@@ -337,12 +337,21 @@ func (v *vec[T]) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (v vec[T]) asVec64() Vec {
+func (v vec[T]) AsVec64() Vec {
 	// For vec[float64] this should be no-op.
 	// For vec[float32] it should do a float32->float64 conversion.
 	return Vec{
 		X: float64(v.X),
 		Y: float64(v.Y),
+	}
+}
+
+func (v vec[T]) AsVec32() Vec32 {
+	// For vec[float32] this should be no-op.
+	// For vec[float64] it should do a float64->float32 conversion.
+	return Vec32{
+		X: float32(v.X),
+		Y: float32(v.Y),
 	}
 }
 
