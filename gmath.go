@@ -14,6 +14,10 @@ func Lerp[T float](from, to, t T) T {
 	return from + ((to - from) * t)
 }
 
+func InvLerp[T float](from, to, value T) T {
+	return (value - from) / (to - from)
+}
+
 func ArcContains(angle, measure Rad, pos, point Vec) bool {
 	startAngle := (angle - measure/2)
 	endAngle := (angle + measure/2)
