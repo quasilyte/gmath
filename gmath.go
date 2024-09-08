@@ -83,6 +83,14 @@ func Scale[T integer](value T, m float64) T {
 	return T(math.Round(float64(value) * m))
 }
 
+// Iround is a helper to perform int(math.Round(x)) operation.
+//
+// This function reduces the number of parenthesis the final
+// expression will have.
+func Iround(x float64) int {
+	return int(math.Round(x))
+}
+
 type integer interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
