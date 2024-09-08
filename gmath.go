@@ -65,10 +65,31 @@ func Percentage[T numeric](value, max T) T {
 	return T(100 * (float64(value) / float64(max)))
 }
 
-type numeric interface {
+// Scale multiplies value by m.
+//
+// For a floating-point value this operation would
+// not make any sense as it can be expressed value*m,
+// but integer value scaling with a floating point m
+// involves conversions and rounding.
+//
+// This function rounds the scaled integer to the
+// nearest integer result.
+// For example:
+//   - Scale(1, 1.8) => 2 (rounds up)
+//   - Scale(1, 1.4) => 1 (rounds down)
+//   - Scale(1, 1)   => 1
+//   - Scale(1, 0)   => 0
+func Scale[T integer](value T, m float64) T {
+	return T(math.Round(float64(value) * m))
+}
+
+type integer interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
-		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
-		float
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
+
+type numeric interface {
+	integer | float
 }
 
 type float interface {
