@@ -10,13 +10,23 @@ func EqualApprox[T float](a, b T) bool {
 	return math.Abs(float64(a-b)) <= Epsilon
 }
 
+// Lerp linearly interpolates between [from] and [to] using the weight [t].
+// The [t] value is usually in the range from 0 to 1.
 func Lerp[T float](from, to, t T) T {
 	return from + ((to - from) * t)
 }
 
+// InvLerp returns an interpolation or extrapolation factor considering the given range and weight [t].
+// The [t] value is usually in the range from 0 to 1.
 func InvLerp[T float](from, to, value T) T {
 	return (value - from) / (to - from)
 }
+
+// Remap maps a value from one range to another.
+//
+// The first range is defined by a pair of [fromMin] and [fromMax].
+// The second range is defined by a pair of [toMin] and [toMax].
+// The [t] value is usually in the range from 0 to 1.
 func Remap[T float](fromMin, fromMax, toMin, toMax, value T) T {
 	t := InvLerp(fromMin, fromMax, value)
 	return Lerp(toMin, toMax, t)
