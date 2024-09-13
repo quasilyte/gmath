@@ -109,6 +109,35 @@ func Iround(x float64) int {
 	return int(math.Round(x))
 }
 
+// Deviation reports the weight of the difference between x and y.
+//
+// In other words, it returns the multiplier to make the lower value
+// between the two identical to other.
+//
+// Some examples:
+// * (1, 2) => 2 (1*2 = 2)
+// * (10, 2) => 5 (2*5 = 10)
+// * (3, 3) => 1
+//
+// The order of parameters do not affect the result.
+func Deviation[T float](x, y T) T {
+	if x == y {
+		return 1
+	}
+
+	if x == 0 {
+		x += Epsilon
+	}
+	if y == 0 {
+		y += Epsilon
+	}
+
+	if x < y {
+		x, y = y, x
+	}
+	return x / y
+}
+
 type integer interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
