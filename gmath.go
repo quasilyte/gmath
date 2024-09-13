@@ -138,6 +138,11 @@ func Deviation[T float](x, y T) T {
 	return x / y
 }
 
+// InBounds reports whether v is in the specified inclusive range.
+func InBounds[T numeric](v, min, max T) bool {
+	return v >= min && v <= max
+}
+
 type integer interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
