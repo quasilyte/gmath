@@ -22,6 +22,13 @@ func InvLerp[T float](from, to, value T) T {
 	return (value - from) / (to - from)
 }
 
+// LerpClamped linearly interpolates between [from] and [to] using the weight [t].
+// The [t] value is clamped to the range from 0 to 1.
+func LerpClamped[T float](from, to, t T) T {
+	t = Clamp(t, 0, 1)
+	return from + ((to - from) * t)
+}
+
 // Remap maps a value from one range to another.
 //
 // The first range is defined by a pair of [fromMin] and [fromMax].
