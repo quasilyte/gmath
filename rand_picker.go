@@ -52,7 +52,7 @@ func (p *RandPicker[T]) AddOption(value T, weight float64) {
 }
 
 func (p *RandPicker[T]) IsEmpty() bool {
-	return len(p.values) != 0
+	return len(p.values) == 0
 }
 
 func (p *RandPicker[T]) Pick() T {
