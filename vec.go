@@ -215,6 +215,20 @@ func (v vec[T]) Rounded() vec[T] {
 	}
 }
 
+func (v vec[T]) Floored() vec[T] {
+	return vec[T]{
+		X: T(math.Floor(float64(v.X))),
+		Y: T(math.Floor(float64(v.Y))),
+	}
+}
+
+func (v vec[T]) Ceiled() vec[T] {
+	return vec[T]{
+		X: T(math.Ceil(float64(v.X))),
+		Y: T(math.Ceil(float64(v.Y))),
+	}
+}
+
 // Normalized returns the vector scaled to unit length.
 // Functionally equivalent to `v.Divf(v.Len())`.
 //
