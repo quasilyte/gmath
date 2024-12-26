@@ -109,6 +109,39 @@ func RandIterate[T any](r *Rand, slice []T, f func(x T) bool) T {
 	return result
 }
 
+func RandIterateRef[T any](r *Rand, slice []T, f func(x *T) bool) *T {
+	if len(slice) == 0 {
+		return nil
+	}
+	if len(slice) == 1 {
+		// Don't use rand() if there is only 1 element.
+		x := &slice[0]
+		if f(x) {
+			return x
+		}
+		return nil
+	}
+
+	var result *T
+	var slider Slider
+	slider.SetBounds(0, len(slice)-1)
+	slider.TrySetValue(r.IntRange(0, len(slice)-1))
+	inc := r.Bool()
+	for i := 0; i < len(slice); i++ {
+		x := &slice[slider.Value()]
+		if inc {
+			slider.Inc()
+		} else {
+			slider.Dec()
+		}
+		if f(x) {
+			result = x
+			break
+		}
+	}
+	return result
+}
+
 func Shuffle[T any](r *Rand, slice []T) {
 	r.rng.Shuffle(len(slice), func(i, j int) {
 		slice[i], slice[j] = slice[j], slice[i]
