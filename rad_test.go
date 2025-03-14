@@ -34,9 +34,16 @@ func TestRadNormalized(t *testing.T) {
 		{0, 0},
 		{1, 1},
 		{3 * math.Pi, math.Pi},
+		{5 * math.Pi, math.Pi},
+		{7 * math.Pi, math.Pi},
+		{19 * math.Pi, math.Pi},
+		{20 * math.Pi, 0},
 		{math.Pi, math.Pi},
 		{-math.Pi, math.Pi},
 		{-0.2, 2*math.Pi - 0.2},
+		{-2 * math.Pi, 0},
+		{-4 * math.Pi, 0},
+		{-5 * math.Pi, math.Pi},
 	}
 
 	for _, test := range tests {

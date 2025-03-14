@@ -2,6 +2,8 @@ package gmath
 
 import (
 	"math"
+
+	"github.com/quasilyte/gmath/fastmath"
 )
 
 // Rad represents a radian value.
@@ -55,8 +57,8 @@ func (r Rad) AngleDelta(r2 Rad) Rad {
 }
 
 func (r Rad) LerpAngle(toAngle Rad, weight float64) Rad {
-	difference := math.Mod(float64(toAngle)-float64(r), 2*math.Pi)
-	dist := math.Mod(2.0*difference, 2*math.Pi) - difference
+	difference := fastmath.Mod(float64(toAngle)-float64(r), 2*math.Pi)
+	dist := fastmath.Mod(2.0*difference, 2*math.Pi) - difference
 	rotationAmount := Rad(dist * weight)
 	// TODO: can this be optimized?
 	// AngleDelta should be replaced by something more efficient.
@@ -68,8 +70,8 @@ func (r Rad) LerpAngle(toAngle Rad, weight float64) Rad {
 }
 
 func (r Rad) RotatedTowards(toAngle, amount Rad) Rad {
-	difference := math.Mod(float64(toAngle)-float64(r), 2*math.Pi)
-	dist := math.Mod(2.0*difference, 2*math.Pi) - difference
+	difference := fastmath.Mod(float64(toAngle)-float64(r), 2*math.Pi)
+	dist := fastmath.Mod(2.0*difference, 2*math.Pi) - difference
 	if EqualApprox(dist, 0) {
 		return toAngle
 	}

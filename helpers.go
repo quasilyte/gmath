@@ -1,8 +1,6 @@
 package gmath
 
-import (
-	"math"
-)
+import "github.com/quasilyte/gmath/fastmath"
 
 func cubicInterpolate(from, to, pre, post, t float64) float64 {
 	return 0.5 *
@@ -13,7 +11,7 @@ func cubicInterpolate(from, to, pre, post, t float64) float64 {
 }
 
 func fposmod(x, y float64) float64 {
-	value := math.Mod(x, y)
+	value := fastmath.Mod(x, y)
 	if ((value < 0) && (y > 0)) || ((value > 0) && (y < 0)) {
 		value += y
 	}
