@@ -64,12 +64,7 @@ func (p *RandPicker[T]) Pick() T {
 		return p.values[0]
 	}
 
-	// In a normal use case the random picker is initialized and then used
-	// without adding extra options, so this sorting will happen only once in that case.
-	if !p.sorted {
-		sort.Sort(&p.keys)
-		p.sorted = true
-	}
+	p.ensureSorted()
 
 	roll := p.r.FloatRange(0, p.threshold)
 	i := sort.Search(len(p.keys), func(i int) bool {
@@ -81,4 +76,13 @@ func (p *RandPicker[T]) Pick() T {
 		result = p.values[len(p.values)-1]
 	}
 	return result
+}
+
+func (p *RandPicker[T]) ensureSorted() {
+	// In a normal use case the random picker is initialized and then used
+	// without adding extra options, so this sorting will happen only once in that case.
+	if !p.sorted {
+		sort.Sort(&p.keys)
+		p.sorted = true
+	}
 }
