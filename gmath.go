@@ -10,6 +10,28 @@ func EqualApprox[T float](a, b T) bool {
 	return math.Abs(float64(a-b)) <= Epsilon
 }
 
+// ScaledSum calculates an arithmetic progression that is
+// often used in level-up experience requirement scaling.
+// For example, if baseValue (exp for level 2) is 100,
+// and the step (increase) is 25, then we have these values per level:
+// * level=0 => 0   (the default value)
+// * level=1 => 100 (+100)
+// * level=2 => 225 (+125)
+// * level=3 => 375 (+150)
+// * level=4 => 550 (+175)
+// ...
+// It can also handle fractional level values:
+// * level=1.5 => ~160 for the example above
+//
+// As a special case, it always returns 0 for levels<=0.
+func ScaledSum(baseValue, step, level float64) float64 {
+	if level <= 0 {
+		return 0
+	}
+	k := level
+	return (k * (2*baseValue + (k-1)*step)) * 0.5
+}
+
 // Lerp linearly interpolates between [from] and [to] using the weight [t].
 // The [t] value is usually in the range from 0 to 1.
 func Lerp[T float](from, to, t T) T {
