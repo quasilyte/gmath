@@ -2,6 +2,30 @@ package gmath
 
 import "testing"
 
+func TestCeilN(t *testing.T) {
+	tests := []struct {
+		x    float64
+		n    int
+		want float64
+	}{
+		{0, 0, 0},
+		{0, 2, 0},
+		{1, 2, 2},
+		{2, 2, 2},
+		{3, 2, 4},
+		{144, 5, 145},
+		{145, 5, 145},
+		{146, 5, 150},
+	}
+
+	for _, test := range tests {
+		have := CeilN(test.x, test.n)
+		if have != test.want {
+			t.Fatalf("ceiln(x=%f, n=%d):\nhave: %v\nwant: %v", test.x, test.n, have, test.want)
+		}
+	}
+}
+
 func TestDeviation(t *testing.T) {
 	tests := []struct {
 		x      float64

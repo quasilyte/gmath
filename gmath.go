@@ -10,6 +10,37 @@ func EqualApprox[T float](a, b T) bool {
 	return math.Abs(float64(a-b)) <= Epsilon
 }
 
+// CeilN applies Ceil(x) and then rounds up to the closest n multiplier.
+//
+// This function is useful when trying to turn an arbitrary value
+// into a pretty value. E.g. it can turn a price of 139 into 140
+// if x=139 and n=5.
+//
+// The return value is float, but it's guaranteed to be integer-like
+// (unless you're working with really high x values).
+//
+// * CeilN(0, 0) => 0
+// * CeilN(0, 2) => 0
+// * CeilN(1, 2) => 2
+// * CeilN(2, 2) => 2
+// * CeilN(3, 2) => 4
+// * CeilN(144, 5) => 145
+// * CeilN(145, 5) => 145
+// * CeilN(146, 5) => 150
+func CeilN(x float64, n int) float64 {
+	iv := int(math.Ceil(x))
+
+	extra := 0
+	if n != 0 {
+		extra = n - (iv % n)
+		if extra == n {
+			extra = 0
+		}
+	}
+
+	return float64(iv + extra)
+}
+
 // ScaledSum calculates an arithmetic progression that is
 // often used in level-up experience requirement scaling.
 // For example, if baseValue (exp for level 2) is 100,
