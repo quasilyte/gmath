@@ -11,6 +11,16 @@ type RandSelectOption[T any] struct {
 	Data   T
 }
 
+func ToWeightThresholds[T any](options []RandSelectOption[T]) float64 {
+	totalWeight := 0.0
+	for i := range options {
+		o := &options[i]
+		totalWeight += o.Weight
+		o.Weight = totalWeight
+	}
+	return totalWeight
+}
+
 func RandSelect[T any](config RandSelectConfig[T]) {
 	options := config.Options
 
