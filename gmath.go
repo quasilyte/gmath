@@ -63,6 +63,16 @@ func ScaledSum(baseValue, step, level float64) float64 {
 	return (k * (2*baseValue + (k-1)*step)) * 0.5
 }
 
+// LogScale is a faster alternative to math.Pow(x, scale).
+// You need to adjust the scale parameter for it to give
+// the compatible results.
+// An example usage is math.Pow(x, 1.05) => LogScale(x, 0.06)
+//
+// LogScale is usually 5-10 times faster than math.Pow.
+func LogScale(x float64, scale float64) float64 {
+	return x * (1 + scale*math.Log(x))
+}
+
 // Lerp linearly interpolates between [from] and [to] using the weight [t].
 // The [t] value is usually in the range from 0 to 1.
 func Lerp[T float](from, to, t T) T {
