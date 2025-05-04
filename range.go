@@ -21,6 +21,10 @@ func (rng Range[T]) Contains(v T) bool {
 	return v >= rng.Min && v <= rng.Max
 }
 
+func (rng Range[T]) Clamp(v T) T {
+	return Clamp(v, rng.Min, rng.Max)
+}
+
 func (rng Range[T]) InBounds(minValue, maxValue T) bool {
 	return rng.Min >= minValue && rng.Max <= maxValue &&
 		rng.IsValid()
