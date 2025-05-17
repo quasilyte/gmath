@@ -41,6 +41,27 @@ func CeilN(x float64, n int) float64 {
 	return float64(iv + extra)
 }
 
+// TriangularCurve finds y on a triangular curve for the specified [x].
+// The y is 1.0 when [x]=[peak],
+// it rises linearly from [a] to [peak],
+// and then it falls linearly from [peak] to [b].
+//
+// This function makes the most sense when [a] < [peak] < [b].
+// [x] can have any value, but it is usually better
+// to keep it inside the [a, b] range.
+func TriangularCurve(x, a, peak, b float64) float64 {
+	switch {
+	case x <= a || x >= b:
+		return 0
+	case x < peak:
+		return (x - a) / (peak - a)
+	case x > peak:
+		return (b - x) / (b - peak)
+	default:
+		return 1
+	}
+}
+
 // ScaledSum calculates an arithmetic progression that is
 // often used in level-up experience requirement scaling.
 // For example, if baseValue (exp for level 2) is 100,
