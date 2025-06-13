@@ -241,6 +241,44 @@ func (v vec[T]) Normalized() vec[T] {
 	return v
 }
 
+func (v vec[T]) CircleClamp(center vec[T], rmin, rmax T) vec[T] {
+	pos := v.Sub(center)
+	dist := T(math.Hypot(float64(pos.X), float64(pos.Y)))
+
+	if dist < rmin {
+		scale := rmin / dist
+		return vec[T]{
+			X: center.X + pos.X*scale,
+			Y: center.Y + pos.Y*scale,
+		}
+	}
+
+	if dist > rmax {
+		scale := rmax / dist
+		return vec[T]{
+			X: center.X + pos.X*scale,
+			Y: center.Y + pos.Y*scale,
+		}
+	}
+
+	return v
+}
+
+func (v vec[T]) CircleClampMax(center vec[T], r T) vec[T] {
+	pos := v.Sub(center)
+	dist := T(math.Hypot(float64(pos.X), float64(pos.Y)))
+
+	if dist <= r {
+		return v
+	}
+
+	scale := r / dist
+	return vec[T]{
+		X: center.X + pos.X*scale,
+		Y: center.Y + pos.Y*scale,
+	}
+}
+
 func (v vec[T]) ClampLen(limit T) vec[T] {
 	l := v.Len()
 	if l > 0 && l > limit {
