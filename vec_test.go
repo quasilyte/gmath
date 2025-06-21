@@ -63,6 +63,40 @@ func BenchmarkVecJSONDecodeZero(b *testing.B) {
 	}
 }
 
+func TestVecDirectionTo(t *testing.T) {
+	tests := []struct {
+		from Vec
+		to   Vec
+		want Vec
+	}{
+		// The case with identical from and to.
+		{Vec{0, 0}, Vec{0, 0}, Vec{0, 0}},
+		{Vec{10, 10}, Vec{10, 10}, Vec{0, 0}},
+
+		// Simple directions.
+		{Vec{0, 0}, Vec{1, 0}, Vec{1, 0}},
+		{Vec{1, 0}, Vec{0, 0}, Vec{-1, 0}},
+		{Vec{0, 0}, Vec{0, 1}, Vec{0, 1}},
+		{Vec{0, 1}, Vec{0, 0}, Vec{0, -1}},
+
+		// The result vector should be normalized.
+		{Vec{0, 0}, Vec{20, 0}, Vec{1, 0}},
+		{Vec{20, 0}, Vec{0, 0}, Vec{-1, 0}},
+		{Vec{0, 0}, Vec{0, 20}, Vec{0, 1}},
+		{Vec{0, 20}, Vec{0, 0}, Vec{0, -1}},
+
+		{Vec{0, 0}, Vec{1, 1}, Vec{0.707106781, 0.707106781}},
+		{Vec{1, 1}, Vec{0, 0}, Vec{-0.707106781, -0.707106781}},
+	}
+
+	for _, test := range tests {
+		have := test.from.DirectionTo(test.to)
+		if !EqualApprox(have.X, test.want.X) || !EqualApprox(have.Y, test.want.Y) {
+			t.Fatalf("%v direction to %v:\nhave: %#v\nwant: %#v", test.from, test.to, have, test.want)
+		}
+	}
+}
+
 func TestVecJSON(t *testing.T) {
 	vectors := []Vec{
 		{0, 0},

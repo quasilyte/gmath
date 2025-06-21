@@ -137,7 +137,7 @@ func (v vec[T]) AngleToPoint(pos vec[T]) Rad {
 }
 
 func (v vec[T]) DirectionTo(v2 vec[T]) vec[T] {
-	return v.Sub(v2).Normalized()
+	return v2.Sub(v).Normalized()
 }
 
 func (v vec[T]) VecTowards(pos vec[T], length T) vec[T] {
