@@ -48,6 +48,9 @@ func IntPercentages(values []float64) []int {
 
 	for percentSum < 100 {
 		for i := len(result) - 1; i >= 0; i-- {
+			if values[i] == 0 {
+				continue
+			}
 			percentSum++
 			result[i]++
 			if percentSum >= 100 {
