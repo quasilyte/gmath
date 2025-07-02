@@ -57,6 +57,15 @@ func TestIntPercentages(t *testing.T) {
 			[]float64{3, 3, 3, 3, 3, 3},
 			[]int{16, 16, 17, 17, 17, 17},
 		},
+
+		{
+			[]float64{0, 0},
+			[]int{0, 0},
+		},
+		{
+			[]float64{0, 0, 0},
+			[]int{0, 0, 0},
+		},
 	}
 
 	for _, test := range tests {

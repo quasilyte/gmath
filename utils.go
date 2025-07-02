@@ -15,6 +15,10 @@ import (
 // It is mostly useful when presenting the numerical statistics to the user.
 // The user can tolerate the percentages to be approximated, but they will
 // notice that the sum of all percentages is not 100.
+//
+// The negative values will confuse this function.
+//
+// As a special case, if all values are 0, a slice of all-zeroes is returned.
 func IntPercentages(values []float64) []int {
 	switch len(values) {
 	case 0:
@@ -29,6 +33,11 @@ func IntPercentages(values []float64) []int {
 	}
 
 	result := make([]int, len(values))
+
+	if total == 0 {
+		// A special case - we can't divide by 0.
+		return result
+	}
 
 	percentSum := 0
 	for i, v := range values {
