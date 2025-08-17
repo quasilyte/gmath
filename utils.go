@@ -62,6 +62,14 @@ func IntPercentages(values []float64) []int {
 	return result
 }
 
+func CollectIntPercentages[T any](slice []T, f func(v T) float64) []int {
+	values := make([]float64, len(slice))
+	for i := range slice {
+		values[i] = f(slice[i])
+	}
+	return IntPercentages(values)
+}
+
 func parseFloat(s []byte) (float64, error) {
 	s = bytes.TrimSpace(s)
 
