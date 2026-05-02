@@ -93,3 +93,21 @@ func (r Rect) Add(p Vec) Rect {
 		Max: r.Max.Add(p),
 	}
 }
+
+// Grow resizes the rect in width w and height h in both sides.
+// Negative values would reduce the rect's size.
+//
+// The values of 0 have no sense as they would keep the rect unchanged.
+//
+// Note that the result is not rounded.
+// The rect is not protected against resizes below the valid values (e.g. max becoming < min)
+func (r Rect) Grow(w, h float64) Rect {
+	offset := Vec{
+		X: w,
+		Y: h,
+	}
+	return Rect{
+		Min: r.Min.Sub(offset),
+		Max: r.Max.Add(offset),
+	}
+}
