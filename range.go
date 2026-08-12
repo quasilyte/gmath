@@ -25,6 +25,34 @@ func (rng Range[T]) Clamp(v T) T {
 	return Clamp(v, rng.Min, rng.Max)
 }
 
+func (rng Range[T]) Add(other Range[T]) Range[T] {
+	return Range[T]{
+		Min: rng.Min + other.Min,
+		Max: rng.Max + other.Max,
+	}
+}
+
+func (rng Range[T]) Addf(v T) Range[T] {
+	return Range[T]{
+		Min: rng.Min + v,
+		Max: rng.Max + v,
+	}
+}
+
+func (rng Range[T]) Sub(other Range[T]) Range[T] {
+	return Range[T]{
+		Min: rng.Min - other.Min,
+		Max: rng.Max - other.Max,
+	}
+}
+
+func (rng Range[T]) Subf(v T) Range[T] {
+	return Range[T]{
+		Min: rng.Min - v,
+		Max: rng.Max - v,
+	}
+}
+
 func (rng Range[T]) InBounds(minValue, maxValue T) bool {
 	return rng.Min >= minValue && rng.Max <= maxValue &&
 		rng.IsValid()
